@@ -46,7 +46,7 @@ router.post('/login', async (req, res) => {
         return res.json({message: 'Login Fail'});
     }
     const accessToken = await createAccessJWT(user.email, `${user._id}`);
-    const refreshToken = await createRefreshJWT(user.email);
+    const refreshToken = await createRefreshJWT(user.email, `${user._id}`);
 
     return res.json({message: 'Login Success', access_token: accessToken, refresh_token: refreshToken});
 });

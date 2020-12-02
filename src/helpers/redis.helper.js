@@ -1,6 +1,6 @@
 
 const redis = require("redis");
-const client = redis.createClient();
+const client = redis.createClient(process.env.REDIS_URL);
 
 client.on("error", function(error) {
     console.error(error);
@@ -23,7 +23,7 @@ const setJWT = (key, value) => {
 const getJWT = (key) => {
     return new Promise((resolve, reject) => {
         try {
-            client.get("key", (err, resp) => {
+            client.get(key, (err, resp) => {
                 if(err) reject(err);
                 resolve(resp);
             });            
