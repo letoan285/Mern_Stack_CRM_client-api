@@ -4,6 +4,7 @@ const router = express.Router();
 const { insertUser, getUserByEmail } = require('../models/user/User.model');
 
 const { hashPassword, comparePassword } = require('../helpers/bcrypt.helper');
+const { createAccessJWT, createRefreshJWT } = require('../helpers/jwt.helper');
 
 router.post('/', async (req, res) => {
     const { name, phone, address, email, password, company } = req.body;
@@ -41,8 +42,13 @@ router.post('/login', async (req, res) => {
     }
 
     const result = await comparePassword(password, userPassDB);
+    if(!result){
+        return res.json({message: 'Login Fail'});
+    }
+    const accessToken = await createAccessJWT(user.email, `${user._id}`);
+    const refreshToken = await createRefreshJWT(user.email);
 
-    return res.json({message: result ? 'Login Success' : 'Login Fail'});
+    return res.json({message: 'Login Success', access_token: accessToken, refresh_token: refreshToken});
 });
 
 module.exports = router;
